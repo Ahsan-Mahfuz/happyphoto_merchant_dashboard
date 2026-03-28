@@ -21,6 +21,8 @@ import Revenue from "../Pages/revenue/Revenue";
 import StoreSettings from "../Pages/storeSettings/StoreSettings";
 import Support from "../Pages/support/Support";
 import Profile from "../Pages/profile/Profile";
+import PasswordReset from "../Pages/auth/PasswordReset";
+import SignUp from "../Pages/auth/SignUp";
 
 const router = createBrowserRouter([
   {
@@ -82,22 +84,12 @@ const router = createBrowserRouter([
       },
     ],
   },
-  {
-    path: "/login",
-    element: <Login />,
-  },
-  {
-    path: "/forget-password",
-    element: <ForgetPassword />,
-  },
-  {
-    path: "/verify-code",
-    element: <VerifyCode />,
-  },
-  {
-    path: "/reset-password",
-    element: <SetNewPassword />,
-  },
+  { path: "/login", element: <Login /> },
+  { path: "/forget-password", element: <ForgetPassword /> },
+  { path: "/verify-code", element: <VerifyCode /> },
+  { path: "/reset-password", element: <PasswordReset /> },
+  { path: "/set-new-password", element: <SetNewPassword /> },
+  { path: "/sign-up", element: <SignUp /> },
 ]);
 
 export default router;

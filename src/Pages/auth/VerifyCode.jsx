@@ -1,130 +1,125 @@
-import { Button, Form } from "antd";
 import { useRef, useState } from "react";
-import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Toaster, toast } from "sonner";
+import AuthLayout from "../../components/authLayout/AuthLayout";
+
+const CODE_LENGTH = 5;
 
 const VerifyCode = () => {
+  const [digits, setDigits] = useState(Array(CODE_LENGTH).fill(""));
+  const [loading, setLoading] = useState(false);
+  const inputs = useRef([]);
   const navigate = useNavigate();
-  const [otp, setOtp] = useState(Array(4).fill(""));
-  const inputRefs = useRef([]);
+  const location = useLocation();
+  const email = location.state?.email ?? "your email";
 
-  const handleChange = (index, e) => {
-    const value = e.target.value.replace(/\D/g, "");
-    if (!value) return;
-
-    const newOtp = [...otp];
-    newOtp[index] = value[0];
-    setOtp(newOtp);
-
-    if (index < 3 && inputRefs.current[index + 1]) {
-      inputRefs.current[index + 1].focus();
-    }
+  const handleChange = (index, value) => {
+    const cleaned = value.replace(/\D/g, "").slice(-1); // digits only, 1 char
+    const updated = [...digits];
+    updated[index] = cleaned;
+    setDigits(updated);
+    // Auto-advance
+    if (cleaned && index < CODE_LENGTH - 1) inputs.current[index + 1]?.focus();
   };
 
   const handleKeyDown = (index, e) => {
-    if (e.key === "Backspace") {
-      const newOtp = [...otp];
-      if (otp[index]) {
-        newOtp[index] = "";
-        setOtp(newOtp);
-      } else if (index > 0) {
-        inputRefs.current[index - 1]?.focus();
-        newOtp[index - 1] = "";
-        setOtp(newOtp);
-      }
+    if (e.key === "Backspace" && !digits[index] && index > 0) {
+      inputs.current[index - 1]?.focus();
     }
   };
 
   const handlePaste = (e) => {
     e.preventDefault();
-    const paste = e.clipboardData.getData("text").replace(/\D/g, "");
-    if (!paste) return;
-
-    const pasteArray = paste.split("").slice(0, 4);
-    const newOtp = Array(4).fill("");
-
-    pasteArray.forEach((char, i) => {
-      newOtp[i] = char;
+    const pasted = e.clipboardData
+      .getData("text")
+      .replace(/\D/g, "")
+      .slice(0, CODE_LENGTH);
+    const updated = Array(CODE_LENGTH).fill("");
+    [...pasted].forEach((ch, i) => {
+      updated[i] = ch;
     });
-
-    setOtp(newOtp);
-
-    const nextIndex = pasteArray.length < 4 ? pasteArray.length : 3;
-    setTimeout(() => inputRefs.current[nextIndex]?.focus(), 0);
+    setDigits(updated);
+    inputs.current[Math.min(pasted.length, CODE_LENGTH - 1)]?.focus();
   };
 
-  const onFinishOtp = () => {
-    const enteredOtp = otp.join("");
-    if (enteredOtp.length < 4) {
-      toast.error("Please enter full OTP");
+  const handleVerify = () => {
+    const code = digits.join("");
+    if (code.length < CODE_LENGTH) {
+      toast.error("Please enter the full 5-digit code.");
       return;
     }
-    console.log("Entered OTP:", enteredOtp);
-    navigate("/reset-password");
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      if (code === "12345") {
+        toast.success("Code verified!");
+        setTimeout(() => navigate("/reset-password"), 600);
+      } else {
+        toast.error("Invalid code. Try 12345 for demo.");
+      }
+    }, 900);
   };
 
-  const handleResendOtp = () => {
-    toast.success("OTP sent successfully!");
+  const handleResend = () => {
+    setDigits(Array(CODE_LENGTH).fill(""));
+    inputs.current[0]?.focus();
+    toast.success(`Code resent to ${email}`);
   };
 
   return (
-    <div className="min-h-screen bg-gray-200 flex items-center justify-center font-poppins p-4">
-      <div className="w-full  max-w-[650px] bg-white rounded-2xl shadow-sm p-10">
-        {/* Logo */}
-        <div className="flex justify-center mb-8">
-          <img src="/logo.svg" alt="EzyGut" className="h-12 object-contain" />
-        </div>
-
-        <h1 className="text-xl font-semibold text-gray-800 mb-1">Verify OTP</h1>
-        <p className="text-sm text-gray-500 mb-6">
-          Please check your email. We have sent a code to contact @gmail.com
+    <>
+      <Toaster position="top-center" richColors closeButton />
+      <AuthLayout>
+        <h2 className="text-base font-bold text-gray-800 text-center">
+          Check Your Email
+        </h2>
+        <p className="text-xs text-gray-400 text-center mt-1 mb-1">
+          We sent a reset link to{" "}
+          <strong className="text-gray-600">{email}</strong>
+        </p>
+        <p className="text-xs text-gray-400 text-center mb-6">
+          Enter the 5 digit code that mentioned in the email.
         </p>
 
-        <Form layout="vertical" onFinish={onFinishOtp} className="w-full">
-          <Form.Item className="mb-4">
-            <div
-              className="flex gap-3 justify-center"
-              onPaste={handlePaste}
-            >
-              {otp.map((digit, index) => (
-                <input
-                  key={index}
-                  ref={(el) => (inputRefs.current[index] = el)}
-                  value={digit}
-                  onChange={(e) => handleChange(index, e)}
-                  onKeyDown={(e) => handleKeyDown(index, e)}
-                  maxLength={1}
-                  inputMode="numeric"
-                  className="w-16 h-16 border border-gray-300 rounded-lg text-center text-lg font-medium focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 text-gray-800"
-                  style={{ caretColor: "transparent" }}
-                />
-              ))}
-            </div>
-          </Form.Item>
+        {/* OTP inputs */}
+        <div className="flex justify-center gap-2.5 mb-6" onPaste={handlePaste}>
+          {digits.map((d, i) => (
+            <input
+              key={i}
+              ref={(el) => (inputs.current[i] = el)}
+              type="text"
+              inputMode="numeric"
+              maxLength={1}
+              value={d}
+              onChange={(e) => handleChange(i, e.target.value)}
+              onKeyDown={(e) => handleKeyDown(i, e)}
+              className={`w-10 h-11 text-center text-base font-bold border rounded-xl outline-none transition-all
+                ${d ? "border-green-500 bg-green-50 text-green-700" : "border-gray-200 bg-gray-50 text-gray-800"}
+                focus:border-green-500 focus:ring-2 focus:ring-green-200`}
+            />
+          ))}
+        </div>
 
-          <div className="flex items-center justify-between mb-5">
-            <span className="text-sm text-gray-500">Didn&apos;t receive code?</span>
-            <span
-              className="text-sm text-gray-700 underline underline-offset-2 cursor-pointer hover:text-teal-600"
-              onClick={handleResendOtp}
-            >
-              Resend
-            </span>
-          </div>
+        <button
+          type="button"
+          onClick={handleVerify}
+          disabled={loading}
+          className="w-full py-2.5 rounded-xl bg-green-700 hover:bg-green-800 active:scale-[0.98] text-white text-sm font-semibold transition-all disabled:opacity-70 mb-3"
+        >
+          {loading ? "Verifying…" : "Verify Code"}
+        </button>
 
-          <Form.Item className="mb-0">
-            <Button
-              type="primary"
-              htmlType="submit"
-              className="w-full h-[42px] rounded-lg text-sm font-medium"
-              style={{ backgroundColor: "#00AAA7", borderColor: "#00AAA7" }}
-            >
-              Verify
-            </Button>
-          </Form.Item>
-        </Form>
-      </div>
-    </div>
+        <p className="text-xs text-center text-gray-400">
+          You have not received the email?{" "}
+          <button
+            onClick={handleResend}
+            className="text-green-700 font-semibold hover:underline"
+          >
+            Resend
+          </button>
+        </p>
+      </AuthLayout>
+    </>
   );
 };
 

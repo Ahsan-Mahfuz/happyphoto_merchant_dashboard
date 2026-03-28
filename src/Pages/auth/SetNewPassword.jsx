@@ -1,95 +1,98 @@
-import { Form, Input, Button } from "antd";
-import toast from "react-hot-toast";
+import { useState } from "react";
+import { Form, Input } from "antd";
 import { useNavigate } from "react-router-dom";
+import { Toaster, toast } from "sonner";
+import AuthLayout from "../../components/authLayout/AuthLayout";
 
 const SetNewPassword = () => {
+  const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const onFinish = (values) => {
-    console.log(values);
-    toast.success("Your password has been updated.");
-    navigate("/login");
+
+  const handleUpdate = () => {
+    form.validateFields().then((values) => {
+      if (values.newPassword !== values.confirmPassword) {
+        toast.error("Passwords do not match.");
+        return;
+      }
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+        toast.success("Password updated successfully!");
+        setTimeout(() => navigate("/login"), 800);
+      }, 900);
+    });
   };
 
   return (
-    <div className="min-h-screen bg-gray-200 flex items-center justify-center font-poppins p-4">
-      <div className="w-full max-w-[650px] bg-white rounded-2xl shadow-sm p-10">
-        {/* Logo */}
-        <div className="flex justify-center mb-8">
-          <img src="/logo.svg" alt="EzyGut" className="h-12 object-contain" />
-        </div>
+    <>
+      <Toaster position="top-center" richColors closeButton />
+      <AuthLayout>
+        <h2 className="text-base font-bold text-gray-800 text-center">
+          Set a New Password
+        </h2>
+        <p className="text-xs text-gray-400 text-center mt-1 mb-5 leading-relaxed">
+          Create a new password. Ensure it differs from previous ones for
+          security
+        </p>
 
-        <h1 className="text-xl font-semibold text-gray-800 mb-6">Set new password</h1>
-
-        <Form layout="vertical" onFinish={onFinish} className="w-full">
-          <div className="mb-1">
-            <label className="text-sm text-gray-600 font-medium">Current Password</label>
-          </div>
+        <Form form={form} layout="vertical" requiredMark={false}>
           <Form.Item
-            name="currentPassword"
-            rules={[{ required: true, message: "Please enter your current password!" }]}
-            className="mb-4"
-          >
-            <Input.Password
-              placeholder="••••••••"
-              className="h-[42px] px-4 border-gray-300 rounded-lg text-sm"
-            />
-          </Form.Item>
-
-          <div className="mb-1">
-            <label className="text-sm text-gray-600 font-medium">New Password</label>
-          </div>
-          <Form.Item
-            name="password"
+            name="newPassword"
+            label={
+              <span className="text-xs font-semibold text-gray-600">
+                New Password
+              </span>
+            }
             rules={[
-              { required: true, message: "Please enter your new password!" },
-              { min: 6, message: "Password must be at least 6 characters long!" },
+              { required: true, message: "Required" },
+              { min: 8, message: "At least 8 characters" },
             ]}
-            className="mb-4"
+            className="mb-3"
           >
             <Input.Password
-              placeholder="••••••••"
-              className="h-[42px] px-4 border-gray-300 rounded-lg text-sm"
+              placeholder="KK@#$15856"
+              className="rounded-xl h-9 text-sm"
             />
           </Form.Item>
 
-          <div className="mb-1">
-            <label className="text-sm text-gray-600 font-medium">Confirm New Password</label>
-          </div>
           <Form.Item
             name="confirmPassword"
-            dependencies={["password"]}
+            label={
+              <span className="text-xs font-semibold text-gray-600">
+                Confirm Password
+              </span>
+            }
+            dependencies={["newPassword"]}
             rules={[
-              { required: true, message: "Please confirm your new password!" },
+              { required: true, message: "Required" },
               ({ getFieldValue }) => ({
                 validator(_, value) {
-                  if (!value || getFieldValue("password") === value) {
+                  if (!value || getFieldValue("newPassword") === value)
                     return Promise.resolve();
-                  }
-                  return Promise.reject(new Error("Passwords do not match!"));
+                  return Promise.reject(new Error("Passwords do not match"));
                 },
               }),
             ]}
             className="mb-5"
           >
             <Input.Password
-              placeholder="••••••••"
-              className="h-[42px] px-4 border-gray-300 rounded-lg text-sm"
+              placeholder="KK@#$15856"
+              className="rounded-xl h-9 text-sm"
             />
           </Form.Item>
 
-          <Form.Item className="mb-0">
-            <Button
-              type="primary"
-              htmlType="submit"
-              className="w-full h-[42px] rounded-lg text-sm font-medium"
-              style={{ backgroundColor: "#00AAA7", borderColor: "#00AAA7" }}
-            >
-              Set New Password
-            </Button>
-          </Form.Item>
+          <button
+            type="button"
+            onClick={handleUpdate}
+            disabled={loading}
+            className="w-full py-2.5 rounded-xl bg-green-700 hover:bg-green-800 active:scale-[0.98] text-white text-sm font-semibold transition-all disabled:opacity-70"
+          >
+            {loading ? "Updating…" : "Update Password"}
+          </button>
         </Form>
-      </div>
-    </div>
+      </AuthLayout>
+    </>
   );
 };
 

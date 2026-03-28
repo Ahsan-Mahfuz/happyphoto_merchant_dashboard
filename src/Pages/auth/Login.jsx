@@ -1,89 +1,120 @@
-import { Form, Input, Button, Checkbox } from "antd";
-import { Link, useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
+import { useState } from "react";
+import { Form, Input, Checkbox } from "antd";
+import { useNavigate } from "react-router-dom";
+import { Toaster, toast } from "sonner";
+import AuthLayout from "../../components/authLayout/AuthLayout";
 
 const Login = () => {
+  const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const onFinish = (values) => {
-    console.log(values);
-    toast.success("Login successfully!");
-    navigate("/");
+
+  const handleSignIn = () => {
+    form.validateFields().then((values) => {
+      setLoading(true);
+      // Simulate auth
+      setTimeout(() => {
+        setLoading(false);
+        if (
+          values.email === "admin@freshfarms.co" &&
+          values.password === "password"
+        ) {
+          toast.success("Welcome back!");
+          setTimeout(() => navigate("/"), 600);
+        } else {
+          toast.error("Invalid email or password.");
+        }
+      }, 900);
+    });
   };
 
   return (
-    <div className="min-h-screen bg-gray-200 flex items-center justify-center font-poppins p-4">
-      <div className="w-full  max-w-[650px] bg-white rounded-2xl shadow-sm p-10">
-        {/* Logo */}
-        <div className="flex justify-center mb-8">
-          <img src="/logo.svg" alt="EzyGut" className="h-12 object-contain" />
-        </div>
-
-        <h1 className="text-xl font-semibold text-gray-800 mb-1">Login</h1>
-        <p className="text-sm text-gray-500 mb-6">
-          Please enter your email and password to continue.
+    <>
+      <Toaster position="top-center" richColors closeButton />
+      <AuthLayout>
+        <h2 className="text-base font-bold text-gray-800 text-center">
+          Sign In to Account
+        </h2>
+        <p className="text-xs text-gray-400 text-center mt-1 mb-5">
+          Please enter your email and password to continue
         </p>
 
-        <Form layout="vertical" onFinish={onFinish} className="w-full">
-          <div className="mb-1">
-            <label className="text-sm text-gray-600 font-medium">Email</label>
-          </div>
+        <Form form={form} layout="vertical" requiredMark={false}>
           <Form.Item
             name="email"
+            label={
+              <span className="text-xs font-semibold text-gray-600">
+                Email address
+              </span>
+            }
             rules={[
-              { required: true, message: "Please enter your email!" },
-              { type: "email", message: "Please enter a valid email!" },
+              {
+                required: true,
+                type: "email",
+                message: "Valid email required",
+              },
             ]}
-            className="mb-4"
+            className="mb-3"
           >
             <Input
-              placeholder="mostain@gamil.com"
-              className="h-[42px] px-4 border-gray-300 rounded-lg text-sm"
+              placeholder="esteban_schiller@gmail.com"
+              className="rounded-xl h-9 text-sm"
             />
           </Form.Item>
 
-          <div className="mb-1">
-            <label className="text-sm text-gray-600 font-medium">
-              Password
-            </label>
-          </div>
           <Form.Item
             name="password"
-            rules={[{ required: true, message: "Please enter your password!" }]}
+            label={
+              <span className="text-xs font-semibold text-gray-600">
+                Password
+              </span>
+            }
+            rules={[{ required: true, message: "Password required" }]}
             className="mb-2"
           >
             <Input.Password
               placeholder="••••••••"
-              className="h-[42px] px-4 border-gray-300 rounded-lg text-sm"
+              className="rounded-xl h-9 text-sm"
             />
           </Form.Item>
 
+          {/* Remember + Forgot */}
           <div className="flex items-center justify-between mb-5">
             <Form.Item name="remember" valuePropName="checked" className="mb-0">
-              <Checkbox className="text-sm text-gray-600">
-                Remember password
+              <Checkbox className="text-xs text-gray-500">
+                Remember Password
               </Checkbox>
             </Form.Item>
-            <Link
-              to="/forget-password"
-              className="text-sm text-gray-500 hover:text-teal-600 underline underline-offset-2"
+            <button
+              type="button"
+              onClick={() => navigate("/forget-password")}
+              className="text-xs text-green-700 font-semibold hover:underline"
             >
-              Forgot password?
-            </Link>
+              Forgot Password?
+            </button>
           </div>
 
-          <Form.Item className="mb-0">
-            <Button
-              type="primary"
-              htmlType="submit"
-              className="w-full h-[42px] rounded-lg text-sm font-medium"
-              style={{ backgroundColor: "#00AAA7", borderColor: "#00AAA7" }}
-            >
-              Sign In
-            </Button>
-          </Form.Item>
+          {/* Sign In */}
+          <button
+            type="button"
+            onClick={handleSignIn}
+            disabled={loading}
+            className="w-full py-2.5 rounded-xl bg-green-700 hover:bg-green-800 active:scale-[0.98] text-white text-sm font-semibold transition-all disabled:opacity-70 mb-2.5"
+          >
+            {loading ? "Signing in…" : "Sign In"}
+          </button>
+
+          {/* Sign Up */}
+          <button
+            type="button"
+            onClick={() => navigate("/sign-up")}
+            className="w-full py-2.5 rounded-xl border border-gray-300 hover:bg-gray-50 active:scale-[0.98] text-gray-700 text-sm font-semibold transition-all"
+          >
+            Sign Up
+          </button>
         </Form>
-      </div>
-    </div>
+      </AuthLayout>
+    </>
   );
 };
 
