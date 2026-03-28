@@ -1,0 +1,32 @@
+export const promotionsData = [
+  {
+    id: 1,
+    code: "WELCOME10",
+    discount: "10% OFF",
+    discountType: "percent",
+    discountValue: 10,
+    minOrder: 20.0,
+    expires: "Dec 31, 2026",
+    status: "Active",
+  },
+  {
+    id: 2,
+    code: "FRESH20",
+    discount: "20% OFF",
+    discountType: "percent",
+    discountValue: 20,
+    minOrder: 50.0,
+    expires: "Mar 15, 2026",
+    status: "Active",
+  },
+  {
+    id: 3,
+    code: "WEEKEND5",
+    discount: "$5.00 OFF",
+    discountType: "flat",
+    discountValue: 5,
+    minOrder: 30.0,
+    expires: "Jan 01, 2026",
+    status: "Expired",
+  },
+];
