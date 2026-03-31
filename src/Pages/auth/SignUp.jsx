@@ -64,6 +64,8 @@ const SignupInner = () => {
           </div>
         )}
 
+        
+
         {/* Step content area */}
         <main className="flex-1 flex items-center justify-center    px-4 py-10">
           <div
