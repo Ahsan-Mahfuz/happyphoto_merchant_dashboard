@@ -74,10 +74,10 @@ const router = createBrowserRouter([
         path: "/store-settings",
         element: <StoreSettings />,
       },
-      {
-        path: "/support",
-        element: <Support />,
-      },
+      // {
+      //   path: "/support",
+      //   element: <Support />,
+      // },
       {
         path: "/profile",
         element: <Profile />,

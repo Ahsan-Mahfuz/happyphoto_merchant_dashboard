@@ -38,7 +38,7 @@ const menuItems = [
     link: "/store-settings",
     icon: <MdOutlineSettings size={20} />,
   },
-  { name: "Support", link: "/support", icon: <MdOutlineSupport size={20} /> },
+  // { name: "Support", link: "/support", icon: <MdOutlineSupport size={20} /> },
 ];
 
 // Sidebar is now a pure presentational component.

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState } from "react";
 import { Form } from "antd";
 import { Toaster, toast } from "sonner";
@@ -43,11 +44,11 @@ const StoreSettings = () => {
 
       <Form form={form} layout="vertical" className="space-y-4">
         <StoreInfoSection form={form} />
-        <BusinessHoursSection hours={hours} onChange={setHours} />
-        <DeliverySettingsSection />
+        {/* <BusinessHoursSection hours={hours} onChange={setHours} /> */}
+        {/* <DeliverySettingsSection /> */}
 
         {/* Save button */}
-        <div className="flex justify-end pb-6">
+        {/* <div className="flex justify-end pb-6">
           <button
             type="button"
             onClick={handleSave}
@@ -56,7 +57,7 @@ const StoreSettings = () => {
           >
             {saving ? "Saving…" : "Save All Changes"}
           </button>
-        </div>
+        </div> */}
       </Form>
     </div>
   );

@@ -16,7 +16,8 @@ const steps = [
 ];
 
 const SetupSidebar = () => {
-  const { step } = useSignup();
+  const { step } = useSignup
+  ();
 
   return (
     <aside className="w-44 flex-shrink-0 pt-2 pr-4">

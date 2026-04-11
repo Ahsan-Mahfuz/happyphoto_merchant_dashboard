@@ -1,9 +1,9 @@
 import { DollarSign, TrendingUp } from "lucide-react";
-import { toast } from "sonner";
+// import { toast } from "sonner";
 import { revenueStats } from "../../Pages/revenue/data/revenueData";
 
 const RevenueStatCards = () => (
-  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
     {/* Today */}
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
       <div className="flex items-center gap-2 mb-2">
@@ -35,7 +35,7 @@ const RevenueStatCards = () => (
     </div>
 
     {/* Payout */}
-    <div
+    {/* <div
       className="rounded-2xl p-5 flex flex-col justify-between"
       style={{ background: "linear-gradient(135deg,#6d28d9,#4c1d95)" }}
     >
@@ -53,7 +53,7 @@ const RevenueStatCards = () => (
       >
         Withdraw Funds ↗
       </button>
-    </div>
+    </div> */}
   </div>
 );
 

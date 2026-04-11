@@ -127,7 +127,7 @@ const Navbar = ({ onMenuClick }) => {
       <div className="flex items-center gap-3 sm:gap-4 flex-shrink-0">
 
         {/* Store Open toggle — hidden on very small screens */}
-        <div className="hidden sm:flex items-center gap-2">
+        {/* <div className="hidden sm:flex items-center gap-2">
           <span className="text-xs font-medium text-gray-500 whitespace-nowrap">
             Store {storeOpen ? "Open" : "Closed"}
           </span>
@@ -136,7 +136,7 @@ const Navbar = ({ onMenuClick }) => {
             onChange={handleStoreToggle}
             style={{ backgroundColor: storeOpen ? "#16a34a" : "#d1d5db" }}
           />
-        </div>
+        </div> */}
 
         {/* Notification Bell */}
         <Popover
