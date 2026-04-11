@@ -25,7 +25,7 @@ const DashboardHome = () => {
         {/* Right column */}
         <div className="space-y-4">
           <QuickActions />
-          <LowStockAlerts />
+          {/* <LowStockAlerts /> */}
         </div>
       </div>
     </div>
